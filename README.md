@@ -252,7 +252,7 @@ Define the following methods. When you think you've got them working, you can ru
     end
     ```
 
-    And then try calling that method in `rails console` with `Director.youngest` (don't forget to `reload!`). Then progressively enhance the method to return what we're actually looking for. **Work in small steps.** 
+    And then try calling that method in `rails console` with `Director.youngest` (don't forget to `reload!`). Once you've established that you've defined the method correctly, work on enhancing the method to return what we're actually looking for. _Work in small steps._
  - `Director.eldest` should return the eldest director on the list. Watch out for `nil` values in the `dob` column — `nil` is considered to be "less than" anything else, when ordered.
 
     You can [use `.not` to filter out](https://chapters.firstdraft.com/chapters/770#wherenotthis) those rows first.
