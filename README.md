@@ -265,7 +265,7 @@ Define the following methods. When you think you've got them working, you can ru
 
 ### Instance methods to define
 
- - Given some director, let's call it `d`, `d.filmography` should return the rows in the movies table that belong to the director.
+ - Given any director, let's call it `d`, `d.filmography` should return the rows in the movies table that belong to the director.
 
     Remember, our models are accessible from anywhere in the Rails application — `lib/tasks`, `rails console`, and _even from within other models_. So, we can reference `Movie` from inside `Director`:
 
@@ -286,12 +286,12 @@ Define the following methods. When you think you've got them working, you can ru
       end
     end
     ```
- - Given some movie, let's call it `m`,
+ - Given any movie, let's call it `m`,
     - `m.director` should return the row in the directors table whose ID matches the movie's `director_id`.
     - `m.characters` should return all of the rows in the characters table that were in the movie.
- - Given some actor, let's call it `a`, `a.characters` should return all of the rows in the characters table that were played by the actor.
+ - Given any actor, let's call it `a`, `a.characters` should return all of the rows in the characters table that were played by the actor.
 
 ### Stretch goals
 
- - Given some movie, let's call it `m`, `m.cast` should return a collection of `Actor`s (_not_ `Character`s) that appeared in that movie. Hint: [`.pluck`](https://chapters.firstdraft.com/chapters/770#pluck).
- - Given some actor, let's call it `a`, `a.filmography` should return a collection of `Movie`s that the actor appeared in.
+ - Given any movie, let's call it `m`, `m.cast` should return a collection of `Actor`s (_not_ `Character`s) that appeared in that movie. Hint: [`.pluck`](https://chapters.firstdraft.com/chapters/770#pluck).
+ - Given any actor, let's call it `a`, `a.filmography` should return a collection of `Movie`s that the actor appeared in.
