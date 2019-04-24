@@ -287,9 +287,9 @@ Define the following methods. When you think you've got them working, you can ru
     end
     ```
  - Given any movie, let's call it `m`,
-    - `m.director` should return the row in the directors table whose ID matches the movie's `director_id`.
-    - `m.characters` should return all of the rows in the characters table that were in the movie.
- - Given any actor, let's call it `a`, `a.characters` should return all of the rows in the characters table that were played by the actor.
+    - `m.director` should return the **row** in the directors table whose ID matches the movie's `director_id`. Note that the method shouldn't just return the _name_ of the director; we want the whole row, so that we can use the other details if we want them (like date of birth or bio).
+    - `m.characters` should return a collection of the characters that were in the movie.
+ - Given any actor, let's call it `a`, `a.characters` should return a collection of the characters that were played by the actor.
 
 ### Stretch goals
 
