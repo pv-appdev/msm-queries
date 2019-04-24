@@ -162,7 +162,7 @@ describe Movie, "#characters" do
     fifth_character.movie_id = movie.id
     fifth_character.save
 
-    expect(movie.filmography).to match_array([first_character, third_character, fifth_character])
+    expect(movie.characters).to match_array([first_character, third_character, fifth_character])
   end
 end
 
