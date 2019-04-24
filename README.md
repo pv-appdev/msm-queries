@@ -58,13 +58,13 @@ d.save
 
 You can check out your newly saved director:
 
-```
+```ruby
 Director.last
 ```
 
 Assuming the new director's ID number is `42`, we can add a new movie:
 
-```
+```ruby
 m = Movie.new
 m.title = "Avengers: Infinity War"
 m.year = 2018
@@ -145,7 +145,7 @@ d.age
 
 ## Defining a class method
 
-We can also define methods that we call on the _class_ itself, rather than on individual members of the class. `.order`, `.count`, etc, are examples of **class**-level methods. We can make our own:
+We can also define methods that we call on the _class_ itself, rather than on individual members of the class. `.order`, `.count`, etc, are examples of **class**-level methods. We can define our own class methods putting the name of the class after the `def` keyword:
 
 ```
 class Director < ApplicationRecord
@@ -242,7 +242,17 @@ Define the following methods. When you think you've got them working, you can ru
 
 ### Class methods to define
 
- - `Director.youngest` should return the youngest director on the list.
+ - `Director.youngest` should return the youngest director on the list. Start by defining a class method with that name:
+
+    ```ruby
+    class Director < ApplicationRecord
+      def Director.youngest
+        return "hello world"
+      end
+    end
+    ```
+
+    And then try calling that method in `rails console` with `Director.youngest` (don't forget to `reload!`). Then progressively enhance the method to return what we're actually looking for. **Work in small steps.** 
  - `Director.eldest` should return the eldest director on the list. Watch out for `nil` values in the `dob` column — `nil` is considered to be "less than" anything else, when ordered.
 
     You can [use `.not` to filter out](https://chapters.firstdraft.com/chapters/770#wherenotthis) those rows first.
