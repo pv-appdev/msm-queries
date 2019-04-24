@@ -271,7 +271,7 @@ Define the following methods. When you think you've got them working, you can ru
 
     ```ruby
     class Director < ApplicationRecord
-      def films
+      def filmography
         return Movie.where({ :director_id => self.id })
       end
     end
@@ -281,7 +281,7 @@ Define the following methods. When you think you've got them working, you can ru
 
     ```ruby
     class Director < ApplicationRecord
-      def films
+      def filmography
         return Movie.directed_by(self.id)
       end
     end
