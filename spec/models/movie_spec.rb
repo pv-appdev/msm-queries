@@ -73,7 +73,7 @@ describe Movie, ".short" do
     fourth_movie.duration = 175
     fourth_movie.save
 
-    expect(Movie.last_decade).to match_array([second_movie])
+    expect(Movie.short).to match_array([second_movie])
   end
 end
 
@@ -95,7 +95,7 @@ describe Movie, ".long" do
     fourth_movie.duration = 175
     fourth_movie.save
 
-    expect(Movie.last_decade).to match_array([third_movie])
+    expect(Movie.long).to match_array([third_movie])
   end
 end
 
