@@ -77,7 +77,7 @@ Etc. We could add a bunch of movies — perhaps even the entire IMDB Top 250 �
 
 Go ahead and add the IMDB Top 250 by hand with `.new`, `.save`, etc..... just kidding! That would take forever. In the real world, _someone_ would have to add all of our data, whether it's us, or our employees, or a rake task that pulls from an API, or our users (through forms in their browser, obviously, not through `rails console`).
 
-But for now I've provided a rake task, `dummy:reset`, that will populate your tables for you quickly. You can go check it out if you like in `lib/tasks/dummy.rake`, but there's not much to see. It just creates a bunch of rows in each table with data that I web scraped from IMDB. Run the task with the following command-line command (you should _not_ be at `pry(main)>` when you run this, you should be at the `$` prompt):
+But for now I've provided a rake task, `dummy:reset`, that will populate your tables for you quickly. You can go check it out if you like in `lib/tasks/dummy.rake`, but there's not much to see. It just creates a bunch of rows in each table with data that I web scraped from IMDB. Run the task with the following command-line command (you should _not_ be at `pry(main)>` when you run this, you should be at the `$` prompt — open a new Terminal tab if you need to):
 
 ```bash
 rails dummy:reset
