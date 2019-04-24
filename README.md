@@ -8,8 +8,8 @@ In this project, we'll practice using `.where` and other ActiveRecord query meth
 
 ## Standard Workflow
 
- 1. From [your Cloud9 repositories list](https://c9.io/account/repos), set up a workspace [as usual](https://guides.firstdraft.com/starting-on-a-project-in-cloud9).
- 1. Set up the project: `bin/setup`.
+ 1. From [your Cloud9 repositories list](https://c9.io/account/repos), create a workspace [as usual](https://guides.firstdraft.com/starting-on-a-project-in-cloud9).
+ 1. Once created, set up the project by typing this at a Terminal prompt (`$`): `bin/setup`.
  1. Follow the [getting automated feedback](https://guides.firstdraft.com/getting-automated-feedback) workflow. There's no target for this project, since we're not building user-facing interfaces yet. But when you're ready, you can run `rails grade` at a command prompt to test the methods that you're writing and see your score.
 
 ## Two important notes about `rails console`
