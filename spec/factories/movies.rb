@@ -10,6 +10,7 @@
 #  image_url   :string
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  director_id :integer
 #
 
 # Copy this file into your spec/support folder; create one if you don't have it.

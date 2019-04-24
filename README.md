@@ -1,337 +1,285 @@
-# Must See Movies Associations
+# Must See Movies — Queries
 
 ## Objective
 
-In this project, we'll practice associating rows from different tables to one another.
-
-### Here is [our target](https://msm-associations-target.herokuapp.com/).
-
-(Don't worry about styling -- focus on functionality only.)
+In this project, we'll practice using `.where` and other ActiveRecord query methods. (It would be good to have [the ActiveRecord Chapter](https://chapters.firstdraft.com/chapters/770#where) open in a tab for easy reference.) We're going to practice in the context of our familiar movie-related domain — Directors, Movies, Characters, and Actors.
 
 ## Setup
 
 ## Standard Workflow
 
  1. From [your Cloud9 repositories list](https://c9.io/account/repos), set up a workspace [as usual](https://guides.firstdraft.com/starting-on-a-project-in-cloud9).
- 1. Set up the project: `bin/setup`
- 1. Start the web server by clicking "Run Project".
- 1. Navigate to your live application preview.
- 1. As you work, remember to navigate to `/git` and **commit often as you work.**
- 1. Make new branches freely to experiment! _Especially_ before starting on a new task.
- 1. Run `rails grade` as often as you like to see how you are doing, but **make sure you test your app manually first to make sure it matches the target's behavior first**.
+ 1. Set up the project: `bin/setup`.
+ 1. Follow the [getting automated feedback](https://guides.firstdraft.com/getting-automated-feedback) workflow. There's no target for this project, since we're not building user-facing interfaces yet. But when you're ready, you can run `rails grade` at a command prompt to test the methods that you're writing and see your score.
 
 ## Two important notes about `rails console`
 
  1. Sometimes when the output of a command is very long, `rails console` is going to paginate it for you. You will have a `:` prompt when this is true, and you can hit <kbd>Return</kbd> to scroll through line by line, or <kbd>Space</kbd> to scroll through page by page.
 
-    **To get back to the regular prompt so that you can enter your next command, just hit <kbd>q</kbd>.**
+    When you reach the end of the output, you'll see `(END)`.
 
- 2. If you are in `rails console` and then make a change to a model (for example, you add a validation or fix a syntax error), then, annoyingly, **you have to `exit` and then relaunch `rails console`** to pick up the new logic.
+    **To get back to the regular prompt so that you can enter your next command, just hit <kbd>q</kbd> at any time.**
 
-## Associating Directors and Movies
+ 2. If you are in `rails console` and then make a change to a model (for example, you define a new method or fix a syntax error), then, annoyingly, **you have to `exit` and then start a new `rails console`** to pick up the new logic.
 
-### Can X have many of Y? Can Y have many of X?
+## Starting out
 
- - Can a director have many movies? Yes
- - Can a movie have many directors? No (in this app, anyway)
+Open a Terminal tab, launch a `rails console` session, and then try the following:
 
-Therefore, we have a one (director) to many (movies) relationship.
-
-Whenever you have a One-to-Many relationship, the way to keep track of it in the database is to **add a column to the Many to keep track of which One it belongs to**.
-
-In this case, we want to add a column to the movies table to keep track of which director each movie belongs to.
-
-We could add a column called "director_name", but that's not very reliable because there could be two directors with the same name, or a name could change.
-
-Instead, we usually store the ID number of the row in the other table that we want to associate to, which is guaranteed by the database never to change or be duplicated. We can always use the ID number to look up the rest of the details.
-
-So, let's now update the Movie resource with all of the columns it needs:
-
-```
-rails generate migration add_director_id_to_movies director_id:integer
+```ruby
+Director.count
+Movie.count
+Character.count
+Actor.count
 ```
 
-Open up the `db/migrate` folder in your application and open up the last file. See if you can make sense of the instructions. When we run `rails db:migrate`, this set of instructions runs to makes changes in the database structure. Specifically, this migration adds a new column called `director_id` to the movies table.
+You'll see that I have already created these 4 tables; they exist, but right now there are no rows in any of them. You can see what columns are in each table by:
 
-The `director_id` column is intended to hold the `id` of a row from over in the directors table. Such columns are called **foreign key columns**.
+ - Typing just the class name into `rails console`, e.g.
 
-Execute the newly generated instructions to update the movies table:
-
-```
-rails db:migrate
-```
-
-Reset the database to include movies that have an included `director_id`:
-
-```
-rails dev:prime_associated_directors
-```
-
-### Validations
-
-Let's add the following validation rules to guard our tables against bogus rows sneaking in. Refer to the [official RailsGuide on Validations](http://guides.rubyonrails.org/active_record_validations.html#numericality).
-
-    Movie:
-     - director_id: must be present
-     - title: must be present; must be unique in combination with year
-     - year: must be integer between 1870 and 2050
-     - duration: must be integer between 0 and 2764800, but it can be blank (hint: there is an option `:allow_blank => true`)
-     - description: no rules
-     - image_url: no rules
-
-    Director:
-     - name: must be present; must be unique in combination with dob
-     - dob: no rules
-     - bio: no rules
-     - image_url: no rules
-
-### Querying practice
-
-In `rails console`, answer the following questions. Refer to your [CRUD with Ruby cheatsheet](https://gist.github.com/raghubetina/bb6336ead63080be2ff4#querying), and/or the [offical RailsGuide on ActiveRecord querying](http://guides.rubyonrails.org/active_record_querying.html).
-
-For each question, see if you can craft a single Ruby expression that returns the final answer when entered into `rails console`.
-
- 1. In what year was the oldest movie in our list released?
- 1. In what year was the most recent movie in our list released?
- 1. What is the duration of the shortest movie in our list?
- 1. What is the longest movie in our list?
- 1. How many movies in our list have the word 'godfather' in their titles?
- 1. Who directed *Life Is Beautiful*?
- 1. How many movies in our list were directed by Francis Ford Coppola?
- 1. What is the most recent movie in our list directed by Francis Ford Coppola?
-
-### Improving the generated boilerplate views
-
- 1. Currently, on the movies index page and a movie's show page, the code we started with is showing users raw director ID numbers. This is bad. Replace the id number with the name of the director.
- 1. On the new and edit movie pages, let's give our users a dropdown box to select a director, rather than having to type in a valid ID number. Let's use the `select_tag` view helper method to make this slightly easier than writing the raw HTML `<select>` and `<option>` tags by hand:
-
-    ```erb
-    <%= select_tag("director_id", options_from_collection_for_select(Director.all, :id, :name, @movie.try(:director_id)), :class => "form-control") %>
     ```
-
- 1. Let's also add a link to the new director form in case the director doesn't exist yet.
- 1. On a director's show page, display a count of how many movies belong to that director.
- 1. On a director's show page, display a list of the movies that belong to that director.
- 1. At the bottom of the list of movies, write a form to add a new movie directly to that director (without having to go to "/movies/new"). You can start by copying over the boilerplate new movie form, and then modify it to pre-populate the `director_id` input with the correct value. Finally, switch the `type` of the input to "hidden".
-
-**The above are all extremely common steps that you will want to go through for almost every One-to-Many that you ever build.**
-
-## Associating Movies and Actors
-
-Our end goal is to show a cast on each movie's show page, and a filmography on each actor's show page.
-
-### Can X have many of Y? Can Y have many of X?
-
-Ask yourself the standard two questions:
-
- - Can a movie be associated to many actors? Yes
- - Can an actor be associated to many movies? Yes
-
-So, we know we have a Many-to-Many on our hands.
-
-If it had been a One-to-Many, we would simply have added a `movie_id` column to actors, or a `actor_id` column to movies. But this won't work because that limits you to connecting to only one.
-
-The trick we'll use instead is to create a whole new table to keep track of the individual connection between each movie/actor pair.
-
-Each row in the new table, or **join table**, will have both an `actor_id` and a `movie_id`, and will represent one actor appearing in one movie (e.g., Christian Bale in The Dark Knight).
-
-If at all possible, try to think of a good, descriptive, real-world name for the join table. What is the connection between Christian Bale and The Dark Knight called in the real world?
-
-How about "Role"? Or "Gig"? Or "Casting"? Or "Character"?
-
-Let's go with "Character", and while we are at it, let's add a column to save the name of the character too (e.g., "Bruce Wayne").
-
-Add the Character CRUD resource to our application:
-
-```
-rails generate draft:resource character movie_id:integer actor_id:integer name:string
-```
-
-`rails db:migrate` as usual and navigate to `/characters` and verify that the CRUD resource boilerplate was generated properly. Then, add a few rows:
-
-```
-rails dev:prime_characters
-```
-
-(This might take a minute.)
-
-### Validations
-
-Whenever you add a model, you should immediately try to put in your validations to prevent bogus rows from sneaking in to your table. Let's go with the following in our new models:
-
-    Character:
-     - movie_id: must be present
-     - actor_id: must be present
-     - name: no rules
-
-    Actor:
-     - name: must be present; must be unique in combination with dob
-     - dob: no rules
-     - bio: no rules
-     - image_url: no rules
-
-### Every Many-to-Many is just two One-to-Manies
-
-We now have two foreign keys in the characters table. That means, essentially, **we've broken the many-to-many between Movies and Actors down into two one-to-manies**. A character belongs to a movie, a movie has many characters. A character belongs to an actor, an actor has many characters.
-
-So, we should first go through the steps we went through above when we were setting up the one-to-many between directors and movies:
-
-1. Currently, on the characters index page and a character's show page, the code that the generator wrote for you is showing users raw movie ID numbers. This is bad. Replace the id number with the title of the movie.
-1. On the new and edit character pages, let's give our users a dropdown box to select a movie, rather than having to type in a valid ID number. Let's use the `select_tag` view helper method to make this slightly easier than writing the raw HTML `<select>` and `<option>` tags by hand:
-
-    ```erb
-    <%= select_tag("movie_id", options_from_collection_for_select(Movie.all, :id, :title, @character.try(:movie_id)), :class => "form-control") %>
+    [2] pry(main)> Character
+    => Character(id: integer, movie_id: integer, actor_id: integer, name: string, created_at: datetime, updated_at: datetime)
     ```
+ - Looking at the comments at the top of the model file, e.g. `app/models/movie.rb`. (These comments are auto-generated and kept up to date by the excellent [annotate gem](https://github.com/ctran/annotate_models).)
 
-1. Let's also add a link to the new movie form in case the movie doesn't exist yet.
-1. On a movie's show page, display a count of how many characters belong to that movie.
-1. On a movie's show page, display a list of the characters that belong to that movie.
-1. At the bottom of the list of characters, write a form to add a new character directly to that movie (without having to go to "/characters/new"). You can start by copying over the boilerplate new character form, and then modify it to pre-populate the `movie_id` input with the correct value. Finally, switch the `type` of the input to "hidden".
+## CRUD some records
 
-Do the same steps for the one-to-many relationship between actors and characters.
-
-### The last hop
-
-Now that you have a list of character names on a movie's show page, replace the character name with the actor name -- voilà, we have a cast.
-
-Now that you have a list of character names on a actor's show page, replace the character name with the movie title -- voilà, we have a filmography.
-
-**We have achieved the many-to-many relationship between movies and actors by adding a join table (characters) and then building two one-to-manies.**
-
-## Association Helper Methods
-
-Now that we have an understanding of how to establish one-to-manies and many-to-manies in our data tables (basically, you just have to put foreign keys in the right places), let's look at some convenience methods that Rails gives us for working with associations.
-
-### belongs_to
-
-Let's say I have a movie in a variable `m`. It is annoying and error prone to, whenever I want the director associated with a movie, have to type
+You can enter some rows into tables using the [ActiveRecord methods that you learned](https://chapters.firstdraft.com/chapters/770):
 
 ```ruby
-d = Director.find_by({ :id => m.director_id })
+d = Director.new
+d.name = "Anthony Russo"
+d.dob = "February 3, 1970"
+d.save
 ```
 
-Wouldn't it be great if I could just type
+You can check out your newly saved director:
 
-```ruby
-d = m.director
+```
+Director.last
 ```
 
-and it would know how to go look up the corresponding row in the directors table based on the movie's `director_id`?
+Assuming the new director's ID number is `42`, we can add a new movie:
 
-Unfortunately, I can't, because `.director` isn't a method that `Movie` objects know how to perform -- it is undefined. (`Movie` objects know how to perform `.director_id` because we get a method for every column in the table.)
-
-Fortunately, since domain modeling and associations are at the heart of every application's power, Rails makes it really easy to define such a method. Just go to the `Movie` model and add a line like this:
-
-```ruby
-belongs_to :director, :class_name => "Director", :foreign_key => "director_id"
+```
+m = Movie.new
+m.title = "Avengers: Infinity War"
+m.year = 2018
+m.duration = 149
+m.director_id = 42
+m.save
 ```
 
-This line tells Rails:
+Etc. We could add a bunch of movies — perhaps even the entire IMDB Top 250 — this way, by adding directors and actors first, then adding movies, and finally adding characters to join movies and actors.
 
- - `:director`: Define a method called `.director` for all movie objects.
- - `:class_name => "Director"`: When someone invokes `.director` on a movie, go fetch a result from the directors table.
- - `:foreign_key => "director_id"`: Use the value in the `director_id` column of the movie to query the directors table for a row.
+Go ahead and add the IMDB Top 250 by hand with `.new`, `.save`, etc..... just kidding! That would take forever. In the real world, _someone_ would have to manually add all of our data, whether it's us or our employees or our users (through forms in their browser, obviously, not through `rails console`).
 
-This is exactly what we were doing by hand with
+But for now I've provided a rake task, `dummy:reset`, that will populate your tables for you quickly. You can go check it out if you like in `lib/tasks/dummy.rake`, but there's not much to see. It just creates a bunch of rows in each table with data that I web scraped from IMDB. Run the task with the following command-line command (you should _not_ be at `pry(main)>` when you run this, you should be at the `$` prompt):
 
-```ruby
-Director.find_by({ :id => m.director_id })
+```bash
+rails dummy:reset
 ```
 
-but we can now use the shorthand of just
+You should see output like
 
-```ruby
-m.director
+```bash
+There are 34 directors in the database
+There are 50 movies in the database
+There are 652 actors in the database
+There are 722 characters in the database
 ```
 
-Even better, if you've named your method and foreign key column conventionally (exactly matching the name of the other table), you can use the super-shorthand version:
+You can verify this yourself by `.count`ing each table in `rails console`.
+
+## Appetizer queries
+
+Okay! Now that we have some data to play around with, let's practice answering some queries in `rails console`.
+
+### Finding a movie by title
+
+In what year was the movie `"The Dark Knight"` released?
+
+ - Use the [`.where` method](https://chapters.firstdraft.com/chapters/770#where). It is everything.
+ - Remember that [`.where` always returns a collection, not a single row](https://chapters.firstdraft.com/chapters/770#where-always-returns-a-collection-not-a-single-row).
+
+### Other queries
+
+ - How many movies in our table are from [before](https://chapters.firstdraft.com/chapters/770#less-than-or-greater-than) the year 2000?
+ - Who is the youngest director in our table?
+ - How many directors in our table are less than 55 years old? What are their names?
+ - How many films in our table were directed by Francis Ford Coppola?
+ - How many films did Morgan Freeman appear in?
+
+## Defining an instance method
+
+Recall that one of the best things about defining [our own classes](https://chapters.firstdraft.com/chapters/769) in Ruby is that we get to empower them with methods, in addition to just storing data (as we would in a `Hash`). So, for example, we could add a method to the `Director` class that would return their current age today:
 
 ```ruby
-belongs_to :director
-```
+class Director < ApplicationRecord
+  def age
+    days_old = Date.today - self.dob
+    years_old = days_old / 365
 
-Neat!
-
-### has_many
-
-Let's say I have a director in a variable `d`. It is annoying and error prone to, whenever I want the movies associated with the director, have to type
-
-```ruby
-a = Movie.where({ :director_id => d.id })
-```
-
-Wouldn't it be great if I could just type
-
-```ruby
-a = d.movies
-```
-
-and it would know how to go look up the corresponding rows in the movies table?
-
-Unfortunately, I can't, because `.movies` isn't a method that `Director` objects know how to perform -- it is undefined.
-
-Fortunately, since domain modeling and associations are at the heart of every application's power, Rails makes it really easy to define such a method. Just go to the `Director` model and add a line like this:
-
-```ruby
-has_many :movies, :class_name => "Movie", :foreign_key => "director_id"
-```
-
-This line tells Rails:
-
- - `:movies`: Define a method called `.movies` for all director objects.
- - `:class_name => "Movie"`: When someone invokes `.movies` on a director, go fetch results from the movies table.
- - `:foreign_key => "director_id"`: Search for the director's id in the `director_id` column of the movies table.
-
-This is exactly what we were doing by hand with
-
-```ruby
-Movie.where({ :director_id => d.id })
-```
-
-but we can now use the shorthand of just
-
-```ruby
-d.movies
-```
-
-Even better, if you've named your method and foreign key column conventionally (exactly matching the name of the other table), you can use the super-shorthand version:
-
-```ruby
-has_many :movies
-```
-
-Neat!
-
-### Clean-up
-
-For each one-to-many relationship in our application (there are three: director-movies, movie-characters, actor-characters), add the `belongs_to` and `has_many` association helpers to the models.
-
-Then, in all of your views, replace messy `.find_by(...)` and `.where(...)`s with clean `.director`, `.movies`, etc.
-
-### has_many/through
-
-After you have established all of your one-to-many association helper methods, you can also add many-to-many helper methods:
-
-```ruby
-class Movie < ActiveRecord::Base
-   ...
-
-   has_many :characters
-   has_many :actors, :through => :characters
+    return years_old.to_i
+  end
 end
 ```
 
-This will allow you to call `.actors` directly on any movie object, and it will walk through the characters table, assemble the collection of corresponding actors, and return it to you!
+Go ahead and add this method to your `Director` model, and then test it out in `rails console`.
 
-Similarly,
+**Since we made a change to our models, we have to reload the `rails console`.** You can do that by
+
+ - `exit`ing the `rails console` and launching it again
+ - or opening a new Terminal tab and launching a new session
+ - or using the `reload!` command
+
+But now, you should be able to do something like this:
 
 ```ruby
-class Actor < ActiveRecord::Base
-   ...
+d = Director.order({ :dob => :desc }).first
+d.age
+```
 
-   has_many :characters
-   has_many :movies, :through => :characters
+## Defining a class method
+
+We can also define methods that we call on the _class_ itself, rather than on individual members of the class. `.order`, `.count`, etc, are examples of **class**-level methods. We can make our own:
+
+```
+class Director < ApplicationRecord
+  def Director.say_hello
+    p "Hello, I'm a class method"
+  end
+
+  def age
+    days_old = Date.today - self.dob
+    years_old = days_old / 365
+
+    return years_old.to_i
+  end
 end
 ```
 
-You may or may not need these many-to-many helper methods in this project, but it's nice to know you can easily add them.
+Now you should be able to do something like this:
+
+```
+[23] pry(main)> reload!
+Reloading...
+=> true
+[24] pry(main)> Director.say_hello
+"Hello, I'm a class method"
+=> "Hello, I'm a class method"
+```
+
+Notice that you can't call this method on an individual director:
+
+```
+[25] pry(main)> d = Director.first
+[26] pry(main)> d.say_hello
+NoMethodError: undefined method `say_hello' for #<Director:0x007fba09954ca8>
+```
+
+No more than you can call `.age` on the class:
+
+```
+[27] pry(main)> Director.age
+NoMethodError: undefined method `age' for #<Class:0x007fba07636f28>
+```
+
+**RTEM!**
+
+Let's make a more useful class method. Right now, if I know a movie title (e.g. `"The Dark Knight"`) and I want to look up a row in the table, I have to do something like this:
+
+```ruby
+t = "The Dark Knight"
+m = Movie.where({ :title => t }).first
+m.year # => 2008
+```
+
+That's not too bad, but what if I wanted to be lazier; whenever I know a movie title and I want to lookup an individual row, I'd like to just say:
+
+```ruby
+m = Movie.first_by_title("The Dark Knight")
+m.year # => 2008
+```
+
+Having a convenience method like that would be great, but right now, I don't:
+
+```
+[37] pry(main)> m = Movie.first_by_title("The Dark Knight")
+NoMethodError: undefined method `first_by_title' for #<Class:0x007fba0cc20f38>
+```
+
+We can _define_ this method for ourselves, though:
+
+```ruby
+class Movie < ApplicationRecord
+  def Movie.first_by_title(some_title)
+    return self.where({ :title => some_title }).first
+  end
+end
+```
+
+Two things to note:
+
+ - When we define a method, we can make it accept arguments using the same syntax that we use to send arguments to a method — parentheses after the method name. We then pick a name for the incoming argument, and we can use it within the method definition (similar in concept to a block variable).
+ - We're still using the `self` keyword, which in the context of a _class_ method refers to the class `Movie` itself.
+
+And now we can be lazy! We've _encapsulated_ the lookup logic in a method. `reload!` your console and give it a shot:
+
+```ruby
+m = Movie.first_by_title("The Dark Knight")
+m.description
+```
+
+This saves us a bit of typing. But, more importantly, we're soon going to have much more involved logic that we can encapsulate in methods using this technique, rather than typing it over and over.
+
+## Methods to define
+
+Define the following methods. When you think you've got them working, you can run `rails grade` at a command prompt to check your work.
+
+### Class methods to define
+
+ - `Director.youngest` should return the youngest director on the list.
+ - `Director.eldest` should return the eldest director on the list. Watch out for `nil` values in the `dob` column — `nil` is considered to be "less than" anything else, when ordered.
+
+    You can [use `.not` to filter out](https://chapters.firstdraft.com/chapters/770#wherenotthis) those rows first.
+ - `Movie.last_decade` should return all of the rows in the movies table where the year is within the last 10 years.
+ - `Movie.short` should return all of the rows in the movies table where the duration is less than 90 minutes.
+ - `Movie.long` should return all of the rows in the movies table where the duration is greater than 180 minutes.
+ - `Movie.directed_by(2)` should return all of the rows in the movies table that were directed by the director with ID 2.
+ - `Character.in_movie(2)` should return all of the rows in the characters table that were in the movie with ID 2.
+ - `Character.acted_by(2)` should return all of the rows in the characters table that were played by the actor with ID 2.
+
+### Instance methods to define
+
+ - Given some director, let's call it `d`, `d.filmography` should return the rows in the movies table that belong to the director.
+
+    Remember, our models are accessible from anywhere in the Rails application — `lib/tasks`, `rails console`, and _even from within other models_. So, we can reference `Movie` from inside `Director`:
+
+    ```ruby
+    class Director < ApplicationRecord
+      def films
+        return Movie.where({ :director_id => self.id })
+      end
+    end
+    ```
+
+    or if you've already defined the `Movie.directed_by()` method from above, you could use it here:
+
+    ```ruby
+    class Director < ApplicationRecord
+      def films
+        return Movie.directed_by(self.id)
+      end
+    end
+    ```
+ - Given some movie, let's call it `m`,
+    - `m.director` should return the row in the directors table whose ID matches the movie's `director_id`.
+    - `m.characters` should return all of the rows in the characters table that were in the movie.
+ - Given some actor, let's call it `a`, `a.characters` should return all of the rows in the characters table that were played by the actor.
+
+### Stretch goals
+
+ - Given some movie, let's call it `m`, `m.cast` should return a collection of `Actor`s (_not_ `Character`s) that appeared in that movie. Hint: [`.pluck`](https://chapters.firstdraft.com/chapters/770#pluck).
+ - Given some actor, let's call it `a`, `a.filmography` should return a collection of `Movie`s that the actor appeared in.

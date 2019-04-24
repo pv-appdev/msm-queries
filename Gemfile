@@ -55,7 +55,6 @@ group :development, :test do
   gem "better_errors"
   gem "binding_of_caller"
   gem "console_ip_whitelist", github: "firstdraft/console_ip_whitelist"
-  gem "draft_log", github: "firstdraft/draft_log"
   gem "pry-rails"
   gem "web_git", github: "firstdraft/web_git"
 end

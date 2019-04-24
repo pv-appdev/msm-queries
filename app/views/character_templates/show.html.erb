@@ -1,0 +1,65 @@
+<div class="row mb-3">
+  <div class="col-md-8 offset-md-2">
+    <h1>
+      Character #<%= @character.id %> details
+    </h1>
+
+    <div class="row mb-3">
+      <div class="col">
+        <a href="/characters" class="btn btn-block btn-outline-secondary">
+          Go back
+        </a>
+      </div>
+
+      <div class="col">
+        <a href="/characters/<%= @character.id %>/edit" class="btn btn-block btn-outline-secondary">
+          Edit character
+        </a>
+      </div>
+
+      <div class="col">
+        <a href="/delete_character/<%= @character.id %>" class="btn btn-block btn-outline-secondary">
+          Delete character
+        </a>
+      </div>
+    </div>
+
+    <dl>
+      <dt>
+        Movie
+      </dt>
+      <dd>
+        <%= @character.movie_id %>
+      </dd>
+
+      <dt>
+        Actor
+      </dt>
+      <dd>
+        <%= @character.actor_id %>
+      </dd>
+
+      <dt>
+        Name
+      </dt>
+      <dd>
+        <%= @character.name %>
+      </dd>
+
+      <dt>
+        Created at
+      </dt>
+      <dd>
+        <%= time_ago_in_words(@character.created_at) %> ago
+      </dd>
+
+      <dt>
+        Updated at
+      </dt>
+      <dd>
+        <%= time_ago_in_words(@character.updated_at) %> ago
+      </dd>
+    </dl>
+  </div>
+</div>
+

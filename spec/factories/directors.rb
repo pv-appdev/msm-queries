@@ -3,7 +3,7 @@
 # Table name: directors
 #
 #  id         :integer          not null, primary key
-#  dob        :string
+#  dob        :date
 #  name       :string
 #  bio        :text
 #  image_url  :string

@@ -1,4 +1,23 @@
 Rails.application.routes.draw do
+  # Routes for the Character resource:
+
+  # CREATE
+  get("/characters/new", { :controller => "characters", :action => "new_form" })
+  post("/create_character", { :controller => "characters", :action => "create_row" })
+
+  # READ
+  get("/characters", { :controller => "characters", :action => "index" })
+  get("/characters/:id_to_display", { :controller => "characters", :action => "show" })
+
+  # UPDATE
+  get("/characters/:prefill_with_id/edit", { :controller => "characters", :action => "edit_form" })
+  post("/update_character/:id_to_modify", { :controller => "characters", :action => "update_row" })
+
+  # DELETE
+  get("/delete_character/:id_to_remove", { :controller => "characters", :action => "destroy_row" })
+
+  #------------------------------
+
   # Routes for the Movie resource:
 
   get("/", { :controller => "movies", :action => "index" })

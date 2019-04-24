@@ -21,13 +21,6 @@ GIT
       devise
 
 GIT
-  remote: https://github.com/firstdraft/draft_log.git
-  revision: e420ecdb71df6fd97c79510097169bf1c9647cb0
-  specs:
-    draft_log (0.0.0)
-      awesome_print
-
-GIT
   remote: https://github.com/firstdraft/grade_runner.git
   revision: 543cd77bbe39f16bb1a3be409cf79be9d9bec38c
   specs:
@@ -377,7 +370,6 @@ DEPENDENCIES
   devise
   dotenv-rails
   draft_generators!
-  draft_log!
   factory_bot_rails
   grade_runner!
   jbuilder (~> 2.5)
@@ -402,4 +394,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.16.2
+   1.16.6

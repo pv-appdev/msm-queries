@@ -1,0 +1,50 @@
+<% if @character.errors.any? %>
+  <% @character.errors.full_messages.each do |message| %>
+    <div class="alert">
+      <%= message %>
+    </div>
+  <% end %>
+<% end %>
+
+<h1>
+  Edit character #<%= @character.id %>
+</h1>
+
+<hr>
+
+<form action="/update_character/<%= @character.id %>" method="post">
+
+  <div class="form-group">
+    <label for="movie_id">
+      Movie
+    </label>
+
+    <input type="text" id="movie_id" name="movie_id" class="form-control" value="<%= @character.movie_id %>">
+  </div>
+
+  <div class="form-group">
+    <label for="actor_id">
+      Actor
+    </label>
+
+    <input type="text" id="actor_id" name="actor_id" class="form-control" value="<%= @character.actor_id %>">
+  </div>
+
+  <div class="form-group">
+    <label for="name">
+      Name
+    </label>
+
+    <input type="text" id="name" name="name" class="form-control" value="<%= @character.name %>">
+  </div>
+
+  <button class="btn btn-block btn-outline-secondary">
+    Update character
+  </button>
+</form>
+
+<hr>
+
+<a href="/characters">
+  Go back
+</a>
