@@ -12,4 +12,9 @@
 #
 
 class Actor < ApplicationRecord
+    def filmography
+     my_movie_id = Character.where({:actor_id => self.id}).pluck(:movie_id)
+     return Movie.where(:id => my_movie_id)
+    end
+    
 end
